@@ -1,5 +1,5 @@
 <?php
-
+require('config.php');
 $con = mysqli_connect(DB_SERVER, DB_USER, DB_DATABASE, DB_PASSWORD) or die('Connection error');
 
 $state = $_GET['s'];	
