@@ -34,7 +34,9 @@ year = year.join("x");
     $("#agency").html("");
     return;
   } 
-  
+  if(document.getElementById("table")){
+   $("#table").html("");
+  }
 
   
   $.get("housing2.php?s="+state+"&y="+year,function(responseData) {
@@ -76,8 +78,9 @@ var agency = $("#agencySelector").val();
 	agency = agency.join("-");
 	//console.log(agency);
 
-if (state=="" || year=="" ) {
+if (state=="" || year=="" || agency=="" ) {
     $("#agency").html("");
+	 $("#table").html("");
     return;
   } 
 //var ag = $("#agencySelector").val()[0];
@@ -159,7 +162,7 @@ Year: <select id="yearSelector" name="year[]" size="1" multiple="multiple" oncha
 <option value="13">2013</option>
 </select>
 
-State: <select id="stateSelector" name="state" size="1"  onchange="stateInfo(this.value)"  >
+State: <select id="stateSelector" name="state" size="1"  onclick="stateInfo(this.value)"  >
 <option value="">SELECT A STATE</option>
   <option value="AL">Alabama</option>
   <option value="AZ">Arizona</option>
