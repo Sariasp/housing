@@ -1,13 +1,16 @@
 <?php
-
+            
+			
+			
+			
+			
 require('config.php');
 $con = mysqli_connect(DB_SERVER, DB_USER, DB_DATABASE, DB_PASSWORD) or die('Connection error');
 
 $state = $_GET['s'];	
-//$year=$_GET['y'];
-$count=0;
 
-//Display Agency drop-down after state is slected 
+
+//Display Agency drop-down after state is selected 
 $query= 'SELECT * FROM sheet1 WHERE SUBSTRING(agency_code,1,2 ) = "'.$state.'" ORDER BY agency_name';
 $result = mysqli_query($con,$query);
 if(!isset($_GET['a'])){
@@ -22,7 +25,7 @@ if(!isset($_GET['a'])){
 }
 
 	
-//Display Table of Results After recieving agency data
+//Display Table of Results After receiving agency data
 if (isset($_GET['a'])){
 	$agency=$_GET['a'];
 	$agencyArray=explode("-", $agency);
@@ -57,8 +60,6 @@ if (isset($_GET['a'])){
 		 		 //Calculate sum of UMA and UML for the State
 				 $stateUMA=$stateUMA+$uma; 
 				 $stateUML=$stateUML+$uml;	
-				// echo "Year: ".$year." UMA: ".$uma." StateUMA: ".$stateUMA. "</br/>";
-				 
 			  }
 			
 		array_push($stateUMA_A,$stateUMA); 
@@ -101,29 +102,30 @@ if (isset($_GET['a'])){
 	$returnUMA=array();
 	$returnUML=array();
 	$returnUR=array();
-	     $count=0;
-			while($row2 = mysqli_fetch_array($result2)) {
-	          array_push($returnAgency, $row2['agency_code']);
-			  array_push($returnAgencyName,$row2['agency_name']);
+     $count=0;
+	 
+	 while($row2 = mysqli_fetch_array($result2)) {
+	       array_push($returnAgency, $row2['agency_code']);
+		   array_push($returnAgencyName,$row2['agency_name']);
 			
-			  foreach($yearArray as $year){
-				  //strip commas out of data and convert to float
-				  $uma=  $row2['uma_cy'.$year];
-				  $uml= $row2['uml_cy'.$year];
-				  $ur= (float) str_replace(',' , '',$uml)/(float) str_replace(',' , '',$uma);
-				  $ur=number_format($ur,2);
+		  foreach($yearArray as $year){
+			 //strip commas out of data and convert to float
+			 $uma=  $row2['uma_cy'.$year];
+			 $uml= $row2['uml_cy'.$year];
+			 $ur= (float) str_replace(',' , '',$uml)/(float) str_replace(',' , '',$uma);
+			 $ur=number_format($ur,2);
 				  
-				   array_push($returnUMA, $uma);
-			   	   array_push($returnUML, $uml);
-				   array_push($returnUR,$ur);
+			 array_push($returnUMA, $uma);
+		  	 array_push($returnUML, $uml);
+			 array_push($returnUR,$ur);
 				   
-       			}
-		   }
+       		}
+	}
 
 	echo "<table id=\"table1\" ><tr ><th >Agency Name</th><th >Code</th>";
 	
 	//Loop to display all of years selected
-		foreach($yearArray as $year){
+	foreach($yearArray as $year){
 			echo "<td>";
 			echo"<table border=\"0\" class=\"table2\" ><tr><th colspan=\"3\">20".$year."</th></tr>";
 			echo "<tr ><th>UMA</th><th>UML</th><th>UR</th></tr></table>";
@@ -131,7 +133,7 @@ if (isset($_GET['a'])){
 	}
 	echo"</tr>";
 
-$num=0;
+		$num=0;
 		for($n=0; $n<$row_cnt2;$n++){
 			 echo "<tr>";
 	   		 echo "<td>" . $returnAgencyName[$n]  . "</td>";
