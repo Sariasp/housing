@@ -2,7 +2,7 @@
 <?php
 $state = $_GET['s'];
 $year = $_GET['year'];
-$con = mysqli_connect('localhost', 'root', 'cbppdb','housing') or die('Connection error');
+$con = mysqli_connect(DB_SERVER, DB_USER, DB_DATABASE, DB_PASSWORD) or die('Connection error');
 $query= 'SELECT * FROM sheet1 WHERE SUBSTRING(agency_code,1,2 ) = "'.$state.'"';
 $result = mysqli_query($con,$query);
 
