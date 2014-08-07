@@ -9,7 +9,6 @@ $con = mysqli_connect(DB_SERVER, DB_USER, DB_PASSWORD, DB_DATABASE) or die('Conn
 
 $state = $_GET['s'];	
 
-
 //Display Agency drop-down after state is selected 
 $query= 'SELECT * FROM sheet1 WHERE SUBSTRING(agency_code,1,2 ) = "'.$state.'" ORDER BY agency_name';
 $result = mysqli_query($con,$query);
@@ -83,6 +82,84 @@ if (isset($_GET['a'])){
 		array_push($avgUR_A,$avgUR);
 	 }
 	
+	
+	
+	
+	
+	
+
+	$nationalQuery='Select * from sheet1';
+	$nationalResult = mysqli_query($con,$nationalQuery);
+	$national_row_cnt = $nationalResult->num_rows;
+	
+	$nationalUMA=0;
+	$nationalUML=0;
+	$nationalUR=0;
+	
+	$nationalUMA_A = array();
+	$nationalUML_A = array();
+	$nationalavgUMA_A=array();
+	$nationalavgUML_A=array();
+	$nationalavgUR_A=array();
+	
+	$nationalResultsArr = array();
+	while($row = mysqli_fetch_array($nationalResult)) {
+		array_push($nationalResultsArr,$row);
+	}
+			
+		foreach($yearArray as $year){
+			
+			for($i=0;$i<count($nationalResultsArr);$i++) {
+				$row = $nationalResultsArr[$i];
+				//strip commas out of data and convert to float
+				$uma= (float) str_replace(',' , '',$row['uma_cy'.$year]); 
+				$uml= (float)str_replace(',' , '',$row['uml_cy'.$year]);
+
+
+ 				//Calculate sum of UMA and UML for the Nation
+				 $nationalUMA=$nationalUMA+$uma; 
+				 $nationalUML=$nationalUML+$uml;	
+			  }
+			
+		array_push($nationalUMA_A,$nationalUMA); 
+		array_push($nationalUML_A,$nationalUML);
+		
+		$nationalUMA=0;
+		$nationalUML=0;
+		}
+	
+		
+	   //Calculate average UMA, UML and UR for Nation
+	 for ($m=0;$m<count($yearArray);$m++) {
+		 $nationalavgUMA=number_format($nationalUMA_A[$m] / $national_row_cnt,2); 
+		array_push($nationalavgUMA_A,$nationalavgUMA);
+		 
+		 $nationalavgUML=number_format($nationalUML_A[$m] / $national_row_cnt,2); 
+		array_push($nationalavgUML_A,$nationalavgUML);
+		
+		 
+		 $nationalavgUR=number_format($nationalavgUML/$nationalavgUMA, 2);
+		array_push($nationalavgUR_A,$nationalavgUR);
+	 }
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 		
 	$query2= 'SELECT * FROM sheet1 WHERE ';
 	 for ($i=0;$i<count($agencyArray);$i++) {
@@ -150,7 +227,7 @@ if (isset($_GET['a'])){
 		 }
 		echo "</tr>";
  	 
-
+//Display State row
 	echo"<tr id=\"state\">
 		<td>State</td><td></td>
 		";
@@ -158,6 +235,16 @@ if (isset($_GET['a'])){
 			echo"<td><table class=\"table2\" ><tr><td>".$avgUMA_A[$j]. "</td>
 			<td>".$avgUML_A[$j]."</td><td>".$avgUR_A[$j]."	</td></tr></table></td>";
 		 }
+	 echo"</tr>";
+//Display National row
+	echo"<tr id=\"national\">
+		<td>National</td><td></td>
+		";
+		for($j=0; $j<count($yearArray); $j++){
+			echo"<td><table class=\"table2\" ><tr><td>".$nationalavgUMA_A[$j]. "</td>
+			<td>".$nationalavgUML_A[$j]."</td><td>".$nationalavgUR_A[$j]."	</td></tr></table></td>";
+		 }
+		 	 
 		echo"</tr></table>";
 	
 }
