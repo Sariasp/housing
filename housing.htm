@@ -26,21 +26,16 @@ border: 1px solid black;
 <script>
 function stateInfo(state){
  var year = $("#yearSelector").val();
- console.log(year);
-	year = year.join("x");
-	console.log(year);
+// console.log(year);
+year = year.join("x");
+	//console.log(year);
  //var year = document.forms[0].elements[0].value;
  if (state==""  ) {
     $("#agency").html("");
     return;
   } 
   
- /* var agency = $("#agencySelector").val();
-	console.log(agency);
-	agency = agency.join("-");
-	console.log(agency);
-  
-  */
+
   
   $.get("housing2.php?s="+state+"&y="+year,function(responseData) {
       $("#agency").html(responseData);
@@ -69,16 +64,18 @@ function stateInfo(state){
 
 
 function agencyInfo(ag){
+if (year = $("#yearSelector").val()){
+
 //var year = document.forms[0].elements[0];
 var year = $("#yearSelector").val();
-	console.log(year);
+	//console.log(year);
 	year = year.join("x");
-	console.log(year);
+	//console.log(year);
 
 var agency = $("#agencySelector").val();
-	console.log(agency);
+	//console.log(agency);
 	agency = agency.join("-");
-	console.log(agency);
+	//console.log(agency);
 
 //var ag = $("#agencySelector").val()[0];
 	
@@ -125,7 +122,7 @@ var state = $("#stateSelector").val();
    
    
   
-
+}
 }
 
 
@@ -145,7 +142,7 @@ var state = $("#stateSelector").val();
 <body>
 
 
-Year: <select id="yearSelector" name="year[]" size="1" multiple="multiple" >
+Year: <select id="yearSelector" name="year[]" size="1" multiple="multiple" onchange="agencyInfo(this.value)"  >
 <option value="">SELECT A YEAR</option>
 <option value="04">2004</option>
 <option value="05" >2005</option>
