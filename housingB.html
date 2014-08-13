@@ -23,7 +23,17 @@
 .table2 td, .table2 th{width:80px}
 
 </style>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<!-- Include Twitter Bootstrap and jQuery: -->
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+ 
+<!-- Include the plugin's CSS and JS: -->
+<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
+<link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
+
+
 
 
 <script>
@@ -41,11 +51,11 @@ year = year.join("x");
    $("#table").html("");
   }
 
-  
+
   $.get("housing2.php?s="+state+"&y="+year,function(responseData) {
-      $("#agency").html(responseData);
+     $("#agency").html(responseData);
+	 $('.multiselect2').multiselect({ includeSelectAllOption: true});
   });
-  
   
   
   
@@ -75,12 +85,14 @@ var year = $("#yearSelector").val();
 	//console.log(year);
 	year = year.join("x");
 	//console.log(year);
-
-var agency = $("#agencySelector").val();
+	
+	var state = $("#stateSelector").val();
+if ($("#agencySelector").val()){
+	var agency = $("#agencySelector").val();
 	//console.log(agency);
 	agency = agency.join("-");
 	//console.log(agency);
-
+}
 if (state=="" || year=="" || agency=="" ) {
     $("#agency").html("");
 	 $("#table").html("");
@@ -91,7 +103,7 @@ if (state=="" || year=="" || agency=="" ) {
 
 
 //var state = document.forms[0].elements[1].value;
-var state = $("#stateSelector").val();
+
 
  $.get("housing2.php?s="+state+"&y="+year+"&a="+agency,function(responseData) {
       $("#table").html(responseData);
@@ -151,7 +163,8 @@ var state = $("#stateSelector").val();
 <body>
 
 
-Year: <select id="yearSelector" name="year[]" size="1" multiple="multiple" onchange="agencyInfo(this.value)"  >
+Year: 
+<select class="multiselect" id="yearSelector" name="year[]" size="1" multiple="multiple" onchange="agencyInfo(this.value)"  >
 
 <option value="04">2004</option>
 <option value="05" >2005</option>
@@ -230,6 +243,9 @@ State: <select id="stateSelector" name="state" size="1"  onclick="stateInfo(this
 
 <br /><br /><br />
 <div id="table"></div>
-
+<script type="text/javascript">
+$(document).ready(function() {
+    $('.multiselect').multiselect({ includeSelectAllOption: true});
+});</script>
 </body>
 </html>

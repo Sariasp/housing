@@ -14,8 +14,8 @@ $query= 'SELECT * FROM sheet1 WHERE SUBSTRING(agency_code,1,2 ) = "'.$state.'" O
 $result = mysqli_query($con,$query);
 if(!isset($_GET['a'])){
 
-	echo "Agency: <select name=\"agencySelector\" id=\"agencySelector\" onchange=\"agencyInfo(this.value)\"  multiple=\"multiple\"> 
-			<option value=\"\">SELECT AN AGENCY</option>";
+	echo "Agency: <select class=\"multiselect2\" name=\"agencySelector\" id=\"agencySelector\" onchange=\"agencyInfo(this.value)\"  multiple=\"multiple\"> 
+			";
 	
 	while($row = mysqli_fetch_array($result)) {
 	  	echo "<option value='".$row['agency_code']."'>". $row['agency_name'] . "</option>";
@@ -91,9 +91,11 @@ if (isset($_GET['a'])){
 		 $avgUML=$stateUML_A[$m] / $row_cnt; 
 		array_push($avgUML_A,$avgUML);
 		
-		 
-		 $avgUR=$avgUML/$avgUMA;
-		array_push($avgUR_A,$avgUR*100);
+		 if($avgUML==1 ||$avgUMA==1){
+			 $avgUR="--";
+		 }
+		 else $avgUR=($avgUML/$avgUMA*100);
+		array_push($avgUR_A,$avgUR);
 	 }
 	
 	
@@ -122,6 +124,8 @@ if (isset($_GET['a'])){
 	}
 			
 		foreach($yearArray as $year){
+			
+			foreach($yearArray as $year){
 			
 			for($i=0;$i<count($nationalResultsArr);$i++) {
 				$row = $nationalResultsArr[$i];
@@ -161,11 +165,17 @@ if (isset($_GET['a'])){
 		array_push($nationalavgUML_A,$nationalavgUML);
 		
 		 
-		 $nationalavgUR=$nationalavgUML/$nationalavgUMA;
-		array_push($nationalavgUR_A,$nationalavgUR*100);
+		  if($nationalavgUMA==1 || $nationalUML==1){
+			 $nationalavgUR="--";
+			}
+			else{ $nationalavgUR=($nationalavgUML/$nationalavgUMA)*100;}
+		
+	 array_push($nationalavgUR_A,$nationalavgUR);
+		 
 	 }
 	
-	
+
+		}
 	
 	
 	
@@ -208,11 +218,17 @@ if (isset($_GET['a'])){
 				}
 				else $uml=1;
 			 
-			 $ur=$uml/$uma;
-							  
+			  
+			  if($uma==1 || $uml==1){
+			 $ur="--";
+			}
+			else $ur=($uml/$uma*100);
+			
+			array_push($returnUR,$ur);
+										  
 			 array_push($returnUMA, $uma);
 		  	 array_push($returnUML, $uml);
-			 array_push($returnUR,$ur*100);
+		
 				   
        		}
 			$uma=0;
@@ -221,25 +237,25 @@ if (isset($_GET['a'])){
 	}
 	
 	
-	
 /*----------------------------------Display Tables---------------------------*/
 
-	echo "<table id=\"table1\" ><tr ><th >Agency Name</th><th >Code</th>";
+	echo "<table id=\"table1\" ><tr class=\"header\"><th >Agency Name</th><th >Code</th>";
 	
 	//Loop to display all of years selected
 	foreach($yearArray as $year){
 			echo "<td>";
 			echo"<table border=\"0\" class=\"table2\" ><tr><th colspan=\"3\">20".$year."</th></tr>";
-			echo "<tr ><th>UMA</th><th>UML</th><th>UR</th></tr></table>";
+			echo "<tr ><th>Authorized Vouchers</th><th>Leased Vouchers</th><th>Utilization Rate</th></tr></table>";
 			echo"</td>";
 	}
 	echo"</tr>";
 		
-		//Display agency row(s)
+					
+	//Display agency row(s)
 		$num=0;
 		for($n=0; $n<$row_cnt2;$n++){
 			 echo "<tr>";
-	   		 echo "<td>" . $returnAgencyName[$n]  . "</td>";
+	   		 echo "<td >" . $returnAgencyName[$n]  . "</td>";
 	    	 echo "<td>" . $returnAgency[$n] . "</td>";
 			
 			for($k=0; $k<count($yearArray); $k++){
@@ -251,15 +267,20 @@ if (isset($_GET['a'])){
 				
 				if ($returnUML[$num] == 1){echo "<td> -- </td>";}
 	   	 		else {echo "<td>" .number_format($returnUML[$num] ). "</td>";}
-	    		echo "<td>" . number_format($returnUR[$num]) . "%</td></tr></table></td>";
+	    	
+				
+				if($returnUR[$num]!="--")$returnUR[$num]=number_format($returnUR[$num]);
+					echo"<td>".$returnUR[$num]."%	</td></tr></table></td>";
+				
+				
 	     		$num++;
 			}
 			
 		 }
-		echo "</tr>";
+		   echo "</tr>";
  	 
 		//Display State row
-			echo"<tr id=\"state\">
+			echo"<tr class=\"highlight\">
 				<td>State</td><td></td>
 				";
 				for($j=0; $j<count($yearArray); $j++){
@@ -271,12 +292,13 @@ if (isset($_GET['a'])){
 					if ($avgUML_A[$j] ==1){echo "<td> -- </td>";}
 					else {echo"<td>".number_format($avgUML_A[$j])."</td>";}
 					
-					echo"<td>".number_format($avgUR_A[$j])."%	</td></tr></table></td>";
+					if($avgUR_A[$j]!="--"){$avgUR_A[$j]=number_format($avgUR_A[$j]);}
+					echo"<td>".$avgUR_A[$j]."%	</td></tr></table></td>";
 				 }
 			 echo"</tr>";
 			 
 		//Display National row
-			echo"<tr id=\"national\">
+			echo"<tr class=\"highlight\">
 				<td>National</td><td></td>
 				";
 				for($j=0; $j<count($yearArray); $j++){
@@ -288,10 +310,17 @@ if (isset($_GET['a'])){
 					
 					if ($nationalavgUML_A[$j] ==1){echo "<td> -- </td>";}
 					else{ echo "<td>".number_format($nationalavgUML_A[$j])."</td>";}
-					echo"<td>".number_format($nationalavgUR_A[$j])."%	</td></tr></table></td>";
+					
+					if($nationalavgUR_A[$j]!="--"){$nationalavgUR_A[$j]=number_format($nationalavgUR_A[$j]);}
+					echo"<td>".$nationalavgUR_A[$j]."%	</td></tr></table></td>";
+				 
 				 }
 					 
-				echo"</tr></table>";
+				echo"</tr>";
+	
+				
+				
+	 echo"</table>";
 	
 }
 
