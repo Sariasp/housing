@@ -26,9 +26,11 @@
 
 <!-- Include Twitter Bootstrap and jQuery: -->
 <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
-<script type="text/javascript" src="js/jquery.min.js"></script>
+ <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript" src="js/bootstrap.min.js"></script>
- 
+
+ <script type="text/javascript" src="js/bootstrap-hover.js"></script>
+
 <!-- Include the plugin's CSS and JS: -->
 <script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
 <link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
@@ -38,40 +40,38 @@
 
 <script>
 function stateInfo(state){
- var year = $("#yearSelector").val();
-// console.log(year);
-year = year.join("x");
-	//console.log(year);
- //var year = document.forms[0].elements[0].value;
- if (state==""  ) {
-    $("#agency").html("");
-    return;
-  } 
-  if(document.getElementById("table")){
-   $("#table").html("");
-  }
-
+	 var year = $("#yearSelector").val();
+	
+	if (!year==""){
+		year = year.join("x");
+		//console.log(year);
+	}
+	
+	 if (state==""  ) {
+		$("#agency").html("");
+	    $("#table").html("");
+		return;
+	  } 
+ 
+  $("#table").html("");
 
   $.get("housing2.php?s="+state+"&y="+year,function(responseData) {
      $("#agency").html(responseData);
-	 $('.multiselect2').multiselect({ includeSelectAllOption: true});
+	 $('.multiselect2').multiselect({ 
+	 	nonSelectedText: 'Select Agency',
+		 includeSelectAllOption: true,
+		 includeSelectAllIfMoreThan: 2,
+		 maxHeight: 300,
+		 templates: {
+		     button: '<button type="button" class="multiselect onhover dropdown dropdown-toggle" data-toggle="dropdown"  data-hover="dropdown"></button>'
+		},
+	 });
+	   $('.onhover').dropdownHover().dropdown();
+    
+
   });
   
   
-  
-  /*if (window.XMLHttpRequest) {
-    // code for IE7+, Firefox, Chrome, Opera, Safari
-    xmlhttp=new XMLHttpRequest();
-  } else { // code for IE6, IE5
-    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-  }
-  xmlhttp.onreadystatechange=function() {
-    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-      document.getElementById("agency").innerHTML=xmlhttp.responseText;
-    }
-  }
-  xmlhttp.open("GET","housing2.php?s="+state+"&y="+year,true);
-  xmlhttp.send();*/
 }
 
 
@@ -83,65 +83,39 @@ function agencyInfo(ag){
 //var year = document.forms[0].elements[0];
 var year = $("#yearSelector").val();
 	//console.log(year);
+	if (!year==""){
 	year = year.join("x");
 	//console.log(year);
+	}
+	else{
+		$("#table").html("");
+		return;
+		
+	}
 	
 	var state = $("#stateSelector").val();
-if ($("#agencySelector").val()){
-	var agency = $("#agencySelector").val();
-	//console.log(agency);
-	agency = agency.join("-");
-	//console.log(agency);
-}
-if (state=="" || year=="" || agency=="" ) {
-    $("#agency").html("");
-	 $("#table").html("");
-    return;
-  } 
-//var ag = $("#agencySelector").val()[0];
 	
+	if ($("#agencySelector").val()){
+		var agency = $("#agencySelector").val();
+		//console.log(agency);
+		
+		agency = agency.join("-");
+		
+		 $.get("housing2.php?s="+state+"&y="+year+"&a="+agency,function(responseData) {
+		  $("#table").html(responseData);
+	  });
+		} 
+		
+	else{  
+		$("#table").html("");
+		return;
+		} 
 
-
-//var state = document.forms[0].elements[1].value;
-
-
- $.get("housing2.php?s="+state+"&y="+year+"&a="+agency,function(responseData) {
-      $("#table").html(responseData);
-  });
-  
- /*var yearArray = new Array();
- var i;
- var count = 0;
- for (i=0; i<year.options.length; i++) {
-    if (year.options[i].selected) {
-     yearArray[count] = year.options[i].value;
-      count++;
-    }
-  }*/
-
-
-  /*if (a=="") {
-    document.getElementById("table").innerHTML="";
-    return;
-  } 
- // $.get("housing2.php?s="+state+"&y="+year+"&a="+ag
- if (window.XMLHttpRequest) {
-    // code for IE7+, Firefox, Chrome, Opera, Safari
-    xmlhttp=new XMLHttpRequest();
-  } else { // code for IE6, IE5
-    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-  }
-  xmlhttp.onreadystatechange=function() {
-    if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-      document.getElementById("table").innerHTML=xmlhttp.responseText;
-    }
-  }
-   var ag=encodeURIComponent(a);
-  xmlhttp.open("GET","housing2.php?s="+state+"&y="+year+"&a="+ag,true);
-  xmlhttp.send();
-  */
-   
-   
+//console.log(agency);
+	if (state=="" ) {
+		 $("#table").html("");
+		return;
+	  } 
   
 
 }
@@ -163,8 +137,8 @@ if (state=="" || year=="" || agency=="" ) {
 <body>
 
 
-Year: 
-<select class="multiselect" id="yearSelector" name="year[]" size="1" multiple="multiple" onchange="agencyInfo(this.value)"  >
+
+<select class="multiselect" id="yearSelector" name="year[]" multiple="multiple" onchange="agencyInfo(this.value)"  >
 
 <option value="04">2004</option>
 <option value="05" >2005</option>
@@ -178,8 +152,8 @@ Year:
 <option value="13">2013</option>
 </select>
 
-State: <select id="stateSelector" name="state" size="1"  onclick="stateInfo(this.value)"  >
-<option value=""></option>
+<select class="singleselect" id="stateSelector" name="state"  size="2" onchange="stateInfo(this.value)"  >
+
  <option value="AK">Alaska</option>
   <option value="AL">Alabama</option>
   <option value="AZ">Arizona</option>
@@ -242,10 +216,58 @@ State: <select id="stateSelector" name="state" size="1"  onclick="stateInfo(this
 
 
 <br /><br /><br />
+
 <div id="table"></div>
+
 <script type="text/javascript">
 $(document).ready(function() {
-    $('.multiselect').multiselect({ includeSelectAllOption: true});
-});</script>
+    $('.multiselect').multiselect({ 
+	nonSelectedText: 'Select Year',
+		includeSelectAllOption: true,
+		maxHeight: 300,
+		templates: {
+		     button: '<button type="button" class="multiselect onhover dropdown dropdown-toggle" data-toggle="dropdown"  data-hover="dropdown"></button>',
+		}
+	});
+	
+	
+	$('.singleselect').multiselect({
+		maxHeight: 300,
+		nonSelectedText: 'Select State',
+		templates: {
+		     button: '<button type="button" class="multiselect onhover dropdown dropdown-toggle" data-toggle="dropdown"  data-hover="dropdown"></button>',
+		},
+		
+		
+		onChange: function(option, checked) {
+			var values = [];
+			$('.singleselect option').each(function() {
+				if ($(this).val() !== option.val()) {
+				values.push($(this).val());
+				}
+			});
+	 
+			$('.singleselect').multiselect('deselect', values);
+		}
+	});
+	
+	
+	//$('.singleselect').siblings('div').children('ul').dropdown('toggle');
+
+	
+	 // $(".btn-group").addClass("dropdown");
+	  
+ $(document).ready(function() {
+      $('.onhover').dropdownHover().dropdown();
+    });
+
+});
+	
+	
+	
+	
+	
+	
+</script>
 </body>
 </html>

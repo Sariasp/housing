@@ -14,7 +14,7 @@ $query= 'SELECT * FROM sheet1 WHERE SUBSTRING(agency_code,1,2 ) = "'.$state.'" O
 $result = mysqli_query($con,$query);
 if(!isset($_GET['a'])){
 
-	echo "Agency: <select class=\"multiselect2\" name=\"agencySelector\" id=\"agencySelector\" onchange=\"agencyInfo(this.value)\"  multiple=\"multiple\"> 
+	echo "<select class=\"multiselect2\" name=\"agencySelector\" id=\"agencySelector\" onchange=\"agencyInfo(this.value)\"  multiple=\"multiple\"> 
 			";
 	
 	while($row = mysqli_fetch_array($result)) {
@@ -45,7 +45,9 @@ if (isset($_GET['a'])){
 	$avgUR_A=array();
 	$uma=0;
 	$uml=0;
-	
+	$stateUR;
+	$stateUR_A=array();
+		
 	$row_cnt = $result->num_rows;
 	
 	$resultsArr = array();
@@ -62,15 +64,17 @@ if (isset($_GET['a'])){
 				if(isset($row['uma_cy'.$year])){ // If selected year exist
 					//strip commas out of data and convert to float
 					$uma= (float) str_replace(',' , '',$row['uma_cy'.$year]); 
-				}
-				else $uma=1;
+				 $stateUMA=$stateUMA+$uma; 
+				 }
+				else $stateUMA="--";
 				if(isset($row['uml_cy'.$year])){ // If selected year exist
 					$uml= (float)str_replace(',' , '',$row['uml_cy'.$year]);
+					$stateUML=$stateUML+$uml;	
+
 				}
-				else $uml=1;
+				else $stateUML="--";
 		 		 //Calculate sum of UMA and UML for the State
-				 $stateUMA=$stateUMA+$uma; 
-				 $stateUML=$stateUML+$uml;	
+				
 			  }
 			
 		array_push($stateUMA_A,$stateUMA); 
@@ -85,7 +89,7 @@ if (isset($_GET['a'])){
 		
 	   //Calculate average UMA, UML and UR for State
 	 for ($m=0;$m<count($yearArray);$m++) {
-		 $avgUMA=$stateUMA_A[$m] / $row_cnt; 
+		/* $avgUMA=$stateUMA_A[$m] / $row_cnt; 
 		array_push($avgUMA_A,$avgUMA);
 		 
 		 $avgUML=$stateUML_A[$m] / $row_cnt; 
@@ -96,6 +100,14 @@ if (isset($_GET['a'])){
 		 }
 		 else $avgUR=($avgUML/$avgUMA*100);
 		array_push($avgUR_A,$avgUR);
+		*/
+		if ($stateUML_A[$m] =="--" || $stateUMA_A[$m] =="--"){
+			$stateUR="--";
+		}
+		else{
+		$stateUR=($stateUML_A[$m]/$stateUMA_A[$m]*100);
+		}
+		array_push($stateUR_A,$stateUR);
 	 }
 	
 	
@@ -116,7 +128,7 @@ if (isset($_GET['a'])){
 	$nationalUML_A = array();
 	$nationalavgUMA_A=array();
 	$nationalavgUML_A=array();
-	$nationalavgUR_A=array();
+	$nationalUR_A=array();
 	
 	$nationalResultsArr = array();
 	while($row = mysqli_fetch_array($nationalResult)) {
@@ -133,17 +145,19 @@ if (isset($_GET['a'])){
 				if(isset($row['uma_cy'.$year])){ // If selected year exist
 					//strip commas out of data and convert to float
 					$uma= (float) str_replace(',' , '',$row['uma_cy'.$year]); 
+					$nationalUMA=$nationalUMA+$uma;
 				}
-				else $uma=1;
+				else $nationalUMA="--";
 				if(isset($row['uml_cy'.$year])){ // If selected year exist
 					$uml= (float)str_replace(',' , '',$row['uml_cy'.$year]);
+					$nationalUML=$nationalUML+$uml;	
 				}
-				else $uml=1;
+				else $nationalUML="--";
 
 
  				//Calculate sum of UMA and UML for the Nation
-				 $nationalUMA=$nationalUMA+$uma; 
-				 $nationalUML=$nationalUML+$uml;	
+				  
+				 
 			  }
 			
 		array_push($nationalUMA_A,$nationalUMA); 
@@ -158,7 +172,7 @@ if (isset($_GET['a'])){
 		
 	   //Calculate average UMA, UML and UR for Nation
 	 for ($m=0;$m<count($yearArray);$m++) {
-		 $nationalavgUMA=$nationalUMA_A[$m] / $national_row_cnt; 
+		/* $nationalavgUMA=$nationalUMA_A[$m] / $national_row_cnt; 
 		array_push($nationalavgUMA_A,$nationalavgUMA);
 		 
 		 $nationalavgUML=$nationalUML_A[$m] / $national_row_cnt; 
@@ -173,11 +187,18 @@ if (isset($_GET['a'])){
 	 array_push($nationalavgUR_A,$nationalavgUR);
 		 
 	 }
-	
+	*/
+	if ($nationalUML_A[$m] =="--" || $nationalUMA_A[$m] =="--"){
+			$nationalUR="--";
+		}
+		else{
+		$nationalUR=($nationalUML_A[$m]/$nationalUMA_A[$m]*100);
+		}
+		array_push($nationalUR_A,$nationalUR);
 
 		}
 	
-	
+}
 	
 	
 	/*-------------------------Calculate Agency data------------------------*/
@@ -286,14 +307,14 @@ if (isset($_GET['a'])){
 				for($j=0; $j<count($yearArray); $j++){
 					echo"<td><table class=\"table2\" ><tr>";
 					
-					if ($avgUMA_A[$j] ==1){echo "<td> -- </td>";}
-					else {echo"<td>".number_format($avgUMA_A[$j]). "</td>";}
+					if ($stateUMA_A[$j] =="--"){echo "<td> -- </td>";}
+					else {echo"<td>".number_format($stateUMA_A[$j]). "</td>";}
 					
-					if ($avgUML_A[$j] ==1){echo "<td> -- </td>";}
-					else {echo"<td>".number_format($avgUML_A[$j])."</td>";}
+					if ($stateUML_A[$j] =="--"){echo "<td> -- </td>";}
+					else {echo"<td>".number_format($stateUML_A[$j])."</td>";}
 					
-					if($avgUR_A[$j]!="--"){$avgUR_A[$j]=number_format($avgUR_A[$j]);}
-					echo"<td>".$avgUR_A[$j]."%	</td></tr></table></td>";
+					if($stateUR_A[$j]!="--"){$stateUR_A[$j]=number_format($stateUR_A[$j]);}
+					echo"<td>".$stateUR_A[$j]."%	</td></tr></table></td>";
 				 }
 			 echo"</tr>";
 			 
@@ -304,15 +325,15 @@ if (isset($_GET['a'])){
 				for($j=0; $j<count($yearArray); $j++){
 					echo"<td><table class=\"table2\" ><tr>";
 					
-					if ($nationalavgUMA_A[$j] ==1){echo "<td> -- </td>";}
-					else {echo"<td>".number_format($nationalavgUMA_A[$j]). "</td>";}
+					if ($nationalUMA_A[$j] =="--"){echo "<td> -- </td>";}
+					else {echo"<td>".number_format($nationalUMA_A[$j]). "</td>";}
 					//echo"<td>".$nationalavgUMA_A[$j]. "</td>";
 					
-					if ($nationalavgUML_A[$j] ==1){echo "<td> -- </td>";}
-					else{ echo "<td>".number_format($nationalavgUML_A[$j])."</td>";}
+					if ($nationalUML_A[$j] =="--"){echo "<td> -- </td>";}
+					else{ echo "<td>".number_format($nationalUML_A[$j])."</td>";}
 					
-					if($nationalavgUR_A[$j]!="--"){$nationalavgUR_A[$j]=number_format($nationalavgUR_A[$j]);}
-					echo"<td>".$nationalavgUR_A[$j]."%	</td></tr></table></td>";
+					if($nationalUR_A[$j]!="--"){$nationalUR_A[$j]=number_format($nationalUR_A[$j]);}
+					echo"<td>".$nationalUR_A[$j]."%	</td></tr></table></td>";
 				 
 				 }
 					 
