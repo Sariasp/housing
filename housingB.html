@@ -3,6 +3,18 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Untitled Document</title>
+
+<!-- Include Twitter Bootstrap and jQuery: -->
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
+ <script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+
+
+<!-- Include the plugin's CSS and JS: -->
+<script type="text/javascript" src="js/bootstrap-hover.js"></script>
+<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
+<link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
+
 <style>
 .highlight{background-color:#E8E8E8; font-weight:bold}
 #table1,#table1 td, #table1 tr,#table1 th  {
@@ -22,23 +34,63 @@
 }
 .table2 td, .table2 th{width:80px}
 
+.txtbox{
+   	position:absolute;
+	z-index:1;
+	width: 700px;
+    padding: 10px;
+    background:  #f3fbff;
+    color: #000000;
+    border: 1px solid #4D4F53;
+    margin: 0px;
+    -webkit-box-shadow: 0px 0px 5px 0px rgba(164, 164, 164, 1);
+    box-shadow: 0px 0px 5px 0px rgba(164, 164, 164, 1);
+	font-size: 14px;
+	left:0px;
+	top:150px;		
+}
+
+
+.txtbox .txtboxheader{ background-color: #003768;
+    color:  white;
+    font-size: 18px;
+    display: block;
+    width: 100%;
+
+
+
+	text-align:center;
+	font-weight:bold;
+}
+.closelink{
+		text-align:center;
+		font-size: 16px;		
+		 cursor:pointer;
+		 color:#004080;
+		 font-weight:bold;
+		 }
+.sourcelink{
+	cursor:pointer;
+}
 </style>
-
-<!-- Include Twitter Bootstrap and jQuery: -->
-<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
- <script type="text/javascript" src="js/jquery.min.js"></script>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
-
- <script type="text/javascript" src="js/bootstrap-hover.js"></script>
-
-<!-- Include the plugin's CSS and JS: -->
-<script type="text/javascript" src="js/bootstrap-multiselect.js"></script>
-<link rel="stylesheet" href="css/bootstrap-multiselect.css" type="text/css"/>
-
-
 
 
 <script>
+$(document).ready(function(){
+$(".txtbox").hide();
+
+  $(".sourcelink").click(function(){
+    $(".txtbox").toggle();
+  });
+  $(".closelink").click(function(){
+    $(".txtbox").hide();
+  });
+  
+});
+</script>
+
+<script>
+
 function stateInfo(state){
 	 var year = $("#yearSelector").val();
 	
@@ -136,7 +188,7 @@ var year = $("#yearSelector").val();
 
 <body>
 
-
+<h3>Housing Voucher Utilization Data</h3>
 
 <select class="multiselect" id="yearSelector" name="year[]" multiple="multiple" onchange="agencyInfo(this.value)"  >
 
@@ -152,7 +204,7 @@ var year = $("#yearSelector").val();
 <option value="13">2013</option>
 </select>
 
-<select class="singleselect" id="stateSelector" name="state"  size="2" onchange="stateInfo(this.value)"  >
+<select class="singleselect" id="stateSelector" name="state" multiple="multiple" size="2" onchange="stateInfo(this.value)"  >
 
  <option value="AK">Alaska</option>
   <option value="AL">Alabama</option>
@@ -213,9 +265,31 @@ var year = $("#yearSelector").val();
 </select>
 
 <span id="agency"></span>
+<br /><br />
+<p class="sourcelink">*Click to Read Source and Methodology</p>
+
+<div class="txtbox">
+	<p class="txtboxheader">Housing Voucher Utilization Data: <br />Sources and Methodology</p>
+	
+	<p>The  number of &ldquo;<strong>Authorized Vouchers</strong>&rdquo; that housing agencies can use is a  number of Housing Choice Vouchers (HCVs) set and approved by the Department of  Housing and Urban Development (HUD) and reflects the historical allocation of  funding by Congress.  It does not reflect  current relative need.  The data for each  agency were downloaded from HUD&rsquo;s Resident Characteristics Report (RCR) and  other HUD sources.  To calculate voucher utilization  rates for each year  (the columns headed &ldquo;<strong>Percent of Authorized in Use</strong>&rdquo;), we  used the authorized count as of the prior December, except for 2004 and 2005,  where we used data for January and June respectively, because comparable data  were unavailable.  We used authorized  vouchers as of the prior December in the denominator to account for the time it  takes housing agencies to lease up new vouchers.</p>
+    
+<p>&ldquo;<strong>Families  Using HCVs</strong>&rdquo;  represents the average number of housing vouchers leased during the calendar  year, as reported by housing agencies to HUD&rsquo;s Voucher Management System  (VMS).  All Housing Choice vouchers,  including those issued under the veterans&rsquo; supportive housing (VASH) program,  were included in the figures for authorized vouchers and vouchers in use.  The data may not reflect corrections  submitted by agencies after HUD released the data, but do reflect adjustments  by CBPP to correct for obvious errors.   Section 811 (i.e., five-year mainstream) vouchers were excluded from the  data, to the extent that we were able to identify them, in order to maintain consistent  data over the time series.  Renewal  funding for these vouchers is now included in the appropriation for  Tenant-based Rental Assistance, but is provided under different rules from  HCVs.&nbsp;&nbsp;</p>
+
+<p>&ldquo;N/A&rdquo; indicates the agency did not administer  vouchers during that year or that the data reported for the year are  incomplete.&nbsp;&nbsp;</p>
+
+<p>Agencies marked with a single asterisk  (*) are funded according to their agreements with HUD under the Moving to Work  demonstration; such agencies are permitted to shift voucher funds to support  public housing and for other purposes.   Agencies marked with a double asterisk (**) were potentially affected by  Hurricanes Katrina and Rita in 2005.   Leasing data for these agencies may be unusually low in some years due  to reporting problems, an actual decline in leasing resulting from the  dislocation of voucher holders, or the use of voucher funds for other purposes  (such as the rehabilitation of damaged public housing) under special waiver  authority granted temporarily by Congress.</p>
+
+<br />
+
+<p class="closelink"><u>Close</u></p>
+
+</div>
 
 
-<br /><br /><br />
+
+
+
+<br />
 
 <div id="table"></div>
 
